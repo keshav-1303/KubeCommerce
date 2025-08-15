@@ -1,0 +1,56 @@
+services:
+    auth-service:
+        build: ./authentication
+        container_name: auth-service
+        ports:
+            - "3000:3000"
+        env_file:
+            - ./authentication/.env
+        volumes:
+            - ./authentication:/usr/src/app/authentication
+            - /usr/src/app/authentication/node_modules
+        depends_on:
+            - db-service
+
+    db-service:
+        image: mongo
+        container_name: db-service
+        ports:
+            - "27017:27017"
+        volumes:
+            - mongo-data:/data/db
+
+    cache-service:
+        image: redis
+        container_name: cache-service
+        ports:
+            - "6379:6379"
+
+    product-service:
+        build: ./product
+        container_name: product-service
+        ports:
+            - "3001:3001"
+        env_file:
+            - ./product/.env
+        volumes:
+            - ./product:/usr/src/app/product
+            - /usr/src/app/product/node_modules
+        depends_on:
+            - cache-service
+            - db-service
+
+    frontend-service:
+        build: ./frontend
+        container_name: frontend-service
+        ports:
+            - "5173:5173"
+        volumes:
+            - ./frontend:/usr/src/app/frontend
+            - /usr/src/app/frontend/node_modules
+        depends_on:
+            - auth-service
+            - product-service
+
+volumes:
+    mongo-data:
