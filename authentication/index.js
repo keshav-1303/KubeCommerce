@@ -19,8 +19,7 @@ app.get("/test", async (req, res) => {
 
 app.post("/register", async (req, res) => {
     console.log("Received request!");
-    const { name, password, email } = req.body;
-    const role = req.query.role || "user"; // default to 'user' if not provided
+    const { name, password, email, role = 'user' } = req.body;
 
     if (!name || !email || !password) {
         return res.status(400).json({
@@ -172,6 +171,54 @@ app.post("/verifyRole", async (req, res) => {
         return res.status(200).json({ message: "Sufficient permissions." });
     } catch (err) {
         return res.status(401).json({ message: "Invalid token" });
+    }
+});
+
+const verifyAdmin = async (req, res, next) => {
+    const token = req.headers.authorization?.split(" ")[1];
+    if (!token) {
+        return res.status(401).json({ message: "Unauthorized" });
+    }
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        if (decoded.role !== "admin") {
+            return res.status(403).json({ message: "Forbidden: insufficient role" });
+        }
+        next();
+    } catch (err) {
+        return res.status(401).json({ message: "Invalid token" });
+    }
+};
+
+app.get("/users", verifyAdmin, async (req, res) => {
+    try {
+        const users = await User.find({}, "-password");
+        res.status(200).json(users);
+    } catch (err) {
+        res.status(500).json({ error: "Server error", details: err.message });
+    }
+});
+
+app.put("/users/:id/role", verifyAdmin, async (req, res) => {
+    try {
+        const { role } = req.body;
+        if (!["user", "admin", "employee"].includes(role)) {
+            return res.status(400).json({ message: "Invalid role" });
+        }
+        const updatedUser = await User.findByIdAndUpdate(
+            req.params.id,
+            { role },
+            { new: true }
+        );
+        if (!updatedUser) {
+            return res.status(404).json({ message: "User not found" });
+        }
+        res.status(200).json({
+            message: "User role updated successfully",
+            user: updatedUser,
+        });
+    } catch (err) {
+        res.status(500).json({ error: "Server error", details: err.message });
     }
 });
 
