@@ -72,7 +72,7 @@ app.get("/products", async (req, res) => {
 
 app.post(
    "/product",
-   verifyRole(["user","admin","employee"]),
+   verifyRole(["admin","employee"]),
    async (req, res) => {
      try {
        const { name, description, price, category, stock } = req.body;
@@ -101,7 +101,7 @@ app.post(
 // Delete product
 app.delete(
   "/delete/:id",
-  verifyRole(["user","admin","employee"]),   // include “user” if you want all roles
+  verifyRole(["admin"]),   // include “user” if you want all roles
   async (req, res) => {
     try {
       console.log("Deleting product...");
@@ -136,7 +136,7 @@ app.delete(
 // Update product
 app.put(
   "/update/:id",
-  verifyRole(["user","admin","employee"]),   // include “user” if you want all roles
+  verifyRole(["admin","employee"]),   // include “user” if you want all roles
   async (req, res) => {
     try {
       const updatedProduct = await Product.findByIdAndUpdate(
