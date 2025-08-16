@@ -37,35 +37,51 @@ A modular, scalable e-commerce backend built using microservices architecture.
 ## Directory Structure
 
 ```
-ecommerce/
-├── docker-compose.yml        # Orchestration of all services
-├── .gitignore                # Exclude unnecessary files
-├── authentication/           # Auth microservice
+KubeCommerce/
+├── docker-compose.yml          # Orchestration for local dev
+├── .gitignore                  # Ignore unnecessary files
+├── README.md
+├── preview.pdf
+├── architecture-diagram.png
+│
+├── authentication/             # Auth microservice
 │   ├── db.js
 │   ├── index.js
 │   ├── userModel.js
 │   ├── Dockerfile
 │   ├── package.json
+│   ├── package-lock.json
 │   └── .env
-├── product/                  # Product microservice
+│
+├── product/                    # Product microservice
 │   ├── db.js
 │   ├── index.js
 │   ├── productModel.js
-│   ├── redis.js              # Redis caching logic
+│   ├── redis.js                # Redis caching logic
 │   ├── Dockerfile
 │   ├── package.json
+│   ├── package-lock.json
 │   └── .env
-├── volumes/
-│   └── mongo-data/           # MongoDB data persistence
-└── k8s/                      # Kubernetes manifests
-    ├── namespace.yaml
-    ├── auth-service.yaml
-    ├── auth-hpa.yaml
-    ├── product-service.yaml
-    ├── product-hpa.yaml
-    ├── mongodb.yaml
-    ├── redis.yaml
+│
+├── frontend/                   # Frontend service
+│   ├── src/
+│   ├── index.html
+│   ├── Dockerfile
+│   ├── package.json
+│   ├── package-lock.json
+│   └── .env
+│
+├── volumes/                    # Persistent storage
+│   └── mongo-data/             # MongoDB data persistence
+│
+└── k8s/                        # Kubernetes manifests
+    ├── auth-deployment.yaml
+    ├── product-deployment.yaml
+    ├── product-db-deployment.yaml
+    ├── frontend-deployment.yaml
+    ├── redis-deployment.yaml
     └── ingress.yaml
+
 ```
 
 ## Prerequisites
@@ -130,43 +146,62 @@ ecommerce/
 The `docker-compose.yml` file orchestrates all four services:
 
 ```yaml
-version: '3.8'
 services:
-  auth-service:
-    build: ./authentication
-    ports:
-      - '3000:3000'
-    env_file: ./authentication/.env
-    volumes:
-      - ./authentication:/app
-    depends_on:
-      - db-service
+    auth-service:
+        build: ./authentication
+        container_name: auth-service
+        ports:
+            - "3000:3000"
+        env_file:
+            - ./authentication/.env
+        volumes:
+            - ./authentication:/usr/src/app/authentication
+            - /usr/src/app/authentication/node_modules
+        depends_on:
+            - db-service
 
-  product-service:
-    build: ./product
-    ports:
-      - '3001:3001'
-    env_file: ./product/.env
-    volumes:
-      - ./product:/app
-    depends_on:
-      - db-service
-      - cache-service
+    db-service:
+        image: mongo
+        container_name: db-service
+        ports:
+            - "27017:27017"
+        volumes:
+            - mongo-data:/data/db
 
-  db-service:
-    image: mongo
-    ports:
-      - '27017:27017'
-    volumes:
-      - mongo-data:/data/db
+    cache-service:
+        image: redis
+        container_name: cache-service
+        ports:
+            - "6379:6379"
 
-  cache-service:
-    image: redis
-    ports:
-      - '6379:6379'
+    product-service:
+        build: ./product
+        container_name: product-service
+        ports:
+            - "3001:3001"
+        env_file:
+            - ./product/.env
+        volumes:
+            - ./product:/usr/src/app/product
+            - /usr/src/app/product/node_modules
+        depends_on:
+            - cache-service
+            - db-service
+
+    frontend-service:
+        build: ./frontend
+        container_name: frontend-service
+        ports:
+            - "5173:5173"
+        volumes:
+            - ./frontend:/usr/src/app/frontend
+            - /usr/src/app/frontend/node_modules
+        depends_on:
+            - auth-service
+            - product-service
 
 volumes:
-  mongo-data:
+    mongo-data:
 ```  
 
 ## Kubernetes Deployment
