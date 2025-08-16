@@ -1,0 +1,44 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: frontend-config
+data:
+  VITE_AUTH_URL: "http://authentication-service:3001"
+  VITE_PRODUCT_URL: "http://product-service:3002"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend-service
+  labels:
+    app: frontend-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontend-service
+  template:
+    metadata:
+      labels:
+        app: frontend-service
+    spec:
+      containers:
+        - name: frontend-service
+          image: kubecommerce-frontend:latest
+          ports:
+            - containerPort: 3000
+          envFrom:
+            - configMapRef:
+                name: frontend-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend-service
+spec:
+  selector:
+    app: frontend-service
+  ports:
+    - protocol: TCP
+      port: 3000
+      targetPort: 3000

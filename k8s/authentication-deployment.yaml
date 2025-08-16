@@ -1,0 +1,45 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: authentication-config
+data:
+  PORT: "3001"
+  MONGO_URI: "mongodb://authentication-db:27017/auth"
+  JWT_SECRET: "supersecretjwtkey"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: authentication-service
+  labels:
+    app: authentication-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: authentication-service
+  template:
+    metadata:
+      labels:
+        app: authentication-service
+    spec:
+      containers:
+        - name: authentication-service
+          image: kubecommerce-authentication:latest
+          ports:
+            - containerPort: 3001
+          envFrom:
+            - configMapRef:
+                name: authentication-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: authentication-service
+spec:
+  selector:
+    app: authentication-service
+  ports:
+    - protocol: TCP
+      port: 3001
+      targetPort: 3001
