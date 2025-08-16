@@ -204,14 +204,39 @@ The setup includes:
 3. **Interact:** Use the above endpoints to manage products.
 
 ## Role based permissions (for admin/employee/user)
-| Action             | User | Employee | Admin |
-| ------------------ | ---- | -------- | ----- |
-| View products      | ✅    | ✅        | ✅     |
-| Buy products       | ✅    | ❌        | ❌     |
-| Add products       | ❌    | ✅        | ✅     |
-| Edit products      | ❌    | ✅        | ✅     |
-| Delete products    | ❌    | ❌        | ✅     |
-| Manage users/roles | ❌    | ❌        | ✅     |
+<table style="width:100%; text-align:center; border-collapse: collapse;">
+  <tr>
+    <th style="width:20%; border: 1px solid #444;">Action</th>
+    <th style="width:20%; border: 1px solid #444;">User</th>
+    <th style="width:20%; border: 1px solid #444;">Employee</th>
+    <th style="width:20%; border: 1px solid #444;">Admin</th>
+  </tr>
+  <tr>
+    <td style="border: 1px solid #444;">View products</td>
+    <td>✅</td><td>✅</td><td>✅</td>
+  </tr>
+  <tr>
+    <td style="border: 1px solid #444;">Buy products</td>
+    <td>✅</td><td>❌</td><td>❌</td>
+  </tr>
+  <tr>
+    <td style="border: 1px solid #444;">Add products</td>
+    <td>❌</td><td>✅</td><td>✅</td>
+  </tr>
+  <tr>
+    <td style="border: 1px solid #444;">Edit products</td>
+    <td>❌</td><td>✅</td><td>✅</td>
+  </tr>
+  <tr>
+    <td style="border: 1px solid #444;">Delete products</td>
+    <td>❌</td><td>❌</td><td>✅</td>
+  </tr>
+  <tr>
+    <td style="border: 1px solid #444;">Manage users/roles</td>
+    <td>❌</td><td>❌</td><td>✅</td>
+  </tr>
+</table>
+
 
 
 ## Contributing
