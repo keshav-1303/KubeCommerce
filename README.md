@@ -203,6 +203,17 @@ The setup includes:
 2. **Access Products:** Include `Authorization: Bearer <token>` header.
 3. **Interact:** Use the above endpoints to manage products.
 
+## Role based permissions (for admin/employee.user)
+| Action             | User | Employee | Admin |
+| ------------------ | ---- | -------- | ----- |
+| View products      | ✅    | ✅        | ✅     |
+| Buy products       | ✅    | ❌        | ❌     |
+| Add products       | ❌    | ✅        | ✅     |
+| Edit products      | ❌    | ✅        | ✅     |
+| Delete products    | ❌    | ❌        | ✅     |
+| Manage users/roles | ❌    | ❌        | ✅     |
+
+
 ## Contributing
 
 Contributions are welcome! Please open an issue or submit a pull request.
