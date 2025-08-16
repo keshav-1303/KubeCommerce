@@ -6,6 +6,9 @@ import Register from './pages/Register'
 import Products from './pages/Products'
 import ProductForm from './pages/ProductForm'
 import ProtectedRoute from './components/ProtectedRoute'
+import AdminRoute from './components/AdminRoute'
+import Admin from './pages/Admin'
+import Payment from './pages/Payment'
 
 export default function App() {
   return (
@@ -22,6 +25,14 @@ export default function App() {
           <Route
             path="/products/new"
             element={<ProtectedRoute><ProductForm /></ProtectedRoute>}
+          />
+          <Route
+            path="/admin"
+            element={<AdminRoute><Admin /></AdminRoute>}
+          />
+          <Route
+            path="/payment"
+            element={<ProtectedRoute><Payment /></ProtectedRoute>}
           />
           <Route path="*" element={<Navigate to="/products" />} />
         </Routes>
