@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom'
 import { setAuthToken } from '../api'
+import { jwtDecode } from 'jwt-decode';
 
 export default function Navbar() {
   const navigate = useNavigate()
@@ -8,6 +9,17 @@ export default function Navbar() {
     localStorage.removeItem('token')
     setAuthToken(null)
     navigate('/login')
+  }
+
+  const token = localStorage.getItem('token');
+  let userRole = null;
+  if (token) {
+    try {
+      const decodedToken = jwtDecode(token);
+      userRole = decodedToken.role;
+    } catch (error) {
+      console.error("Invalid token:", error);
+    }
   }
 
   // Inline styles
@@ -64,6 +76,9 @@ export default function Navbar() {
       <Link to="/" style={brandStyle}>KubeCommerce</Link>
       <div style={linkContainerStyle}>
         <Link to="/products" style={linkStyle}>Products</Link>
+        {userRole === 'admin' && (
+          <Link to="/admin" style={linkStyle}>Admin</Link>
+        )}
         <button onClick={handleLogout} style={buttonStyle}>Logout</button>
       </div>
     </nav>
