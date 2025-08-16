@@ -2,7 +2,7 @@ import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import { productApi } from '../api'
 
-export default function ProductCard({ product, onDeleted }) {
+export default function ProductCard({ product, onDeleted, userRole }) {
   const navigate = useNavigate()
 
   const handleEdit = () => {
@@ -19,6 +19,10 @@ export default function ProductCard({ product, onDeleted }) {
       alert('Could not delete product.')
     }
   }
+
+  const handleBuy = () => {
+    navigate('/payment');
+  };
 
   return (
     <div style={{
@@ -63,27 +67,45 @@ export default function ProductCard({ product, onDeleted }) {
           ₹{product.price}
         </span>
         <div style={{ display: 'flex', gap: '8px' }}>
-          <button onClick={handleEdit} style={{
-            padding: '6px 12px',
-            borderRadius: '6px',
-            border: '1px solid #cbd5e0',
-            background: 'white',
-            cursor: 'pointer'
-          }}>
-            Edit
-          </button>
-          <button onClick={handleDelete} style={{
-            padding: '6px 12px',
-            borderRadius: '6px',
-            border: '1px solid #f56565',
-            background: 'white',
-            color: '#e53e3e',
-            cursor: 'pointer'
-          }}>
-            Delete
-          </button>
+          {(userRole === 'admin' || userRole === 'employee') && (
+            <button onClick={handleEdit} style={{
+              padding: '6px 12px',
+              borderRadius: '6px',
+              border: '1px solid #cbd5e0',
+              background: 'white',
+              cursor: 'pointer'
+            }}>
+              Edit
+            </button>
+          )}
+          {userRole === 'admin' && (
+            <button onClick={handleDelete} style={{
+              padding: '6px 12px',
+              borderRadius: '6px',
+              border: '1px solid #f56565',
+              background: 'white',
+              color: '#e53e3e',
+              cursor: 'pointer'
+            }}>
+              Delete
+            </button>
+          )}
+          {userRole === 'user' && (
+            <button onClick={handleBuy} style={{
+              padding: '6px 12px',
+              borderRadius: '6px',
+              border: '1px solid #4CAF50',
+              background: '#4CAF50',
+              color: 'white',
+              cursor: 'pointer'
+            }}>
+              Buy
+            </button>
+          )}
         </div>
       </div>
     </div>
   )
 }
+
+  
