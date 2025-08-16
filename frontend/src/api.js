@@ -18,3 +18,6 @@ export function setAuthToken(token) {
   }
 }
 
+export const getUsers = () => authApi.get('/users');
+export const updateUserRole = (id, role) => authApi.put(`/users/${id}/role`, { role });
+
