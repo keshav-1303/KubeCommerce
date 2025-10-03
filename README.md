@@ -1,5 +1,5 @@
 # KubeCommerce
-A modular, scalable e-commerce backend built using microservices architecture.
+A modular, scalable e-commerce app built using microservices architecture.
 
 ## Table of Contents
 
