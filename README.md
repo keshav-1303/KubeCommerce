@@ -241,10 +241,11 @@ The setup includes:
 ## Role based permissions (for admin/employee/user)
 <table style="width:100%; text-align:center; border-collapse: collapse;">
   <tr>
-    <th style="width:20%; border: 1px solid #444;">Action</th>
-    <th style="width:20%; border: 1px solid #444;">User</th>
-    <th style="width:20%; border: 1px solid #444;">Employee</th>
-    <th style="width:20%; border: 1px solid #444;">Admin</th>
+    <th style="border: 1px solid #444;">Action</th>
+    <th style="border: 1px solid #444;">User</th>
+    <th style="border: 1px solid #444;">Employee</th>
+    <th style="border: 1px solid #444;">Admin</th>
+
   </tr>
   <tr>
     <td style="border: 1px solid #444;">View products</td>
